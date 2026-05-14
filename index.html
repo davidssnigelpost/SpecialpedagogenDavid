@@ -18,7 +18,6 @@
         .cat-card { background: #fff; padding: 30px; text-align: center; border-radius: 15px; cursor: pointer; border: 3px solid #eee; transition: 0.3s; }
         .cat-card:hover { border-color: var(--secondary); transform: translateY(-3px); }
         .fact-box { background: #f0f4f0; border-left: 5px solid var(--secondary); padding: 15px; margin: 15px 0; border-radius: 0 10px 10px 0; }
-        .lesson-card { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -38,6 +37,9 @@
     <div id="hem" class="page-section active">
         <h2 id="h1">Välkommen <button class="speak-btn" onclick="speakById('h1')">🔊</button></h2>
         <p id="p1">En samlingsplats för anpassat lärande, strukturerade lektioner och interaktiva övningar. <button class="speak-btn" onclick="speakById('p1')">🔊</button></p>
+        <div class="fact-box">
+            <p>Använd menyn ovan för att navigera mellan tips, lektionsplaneringar och spel.</p>
+        </div>
     </div>
 
     <div id="tips" class="page-section">
@@ -60,42 +62,20 @@
         </div>
     </div>
 
-   
-        <h2 id="l-title">Lektionsupplägg <button class="speak-btn" onclick="speakById('l-title')">🔊</button></h2>
-        <p>Färdiga strukturer för undervisningen:</p>
-        
-        <div class="lesson-card">
-            <h3>1. Intensiv avkodning (15 min)</h3>
-            <p><strong>Mål:</strong> Automatisera koppling bokstav-ljud.</p>
-            <ul>
-                <li>Genomgång av dagens bokstäver på tavlan.</li>
-                <li>Eget arbete i spelet "Tre bokstäver".</li>
-                <li>Gemensam läsning av korta ordlistor.</li>
-            </ul>
-        </div>
-
-        <div class="lesson-card">
-            <h3>2. Matte: Talkompisar (20 min)</h3>
-            <p><strong>Mål:</strong> Befästa tiokompisar med konkret stöd.</p>
-            <ul>
-                <li>Laborativt arbete med plockmaterial (centikuber).</li>
-                <li>Övning i spelet "10-kompisar" för mängdträning.</li>
-                <li>Samtal: "Hur många saknas för att fylla tiorutan?"</li>
-            </ul>
-        </div>
-    </div>
-
     <div id="spel" class="page-section">
-        <h2>Välj ett område <button class="speak-btn" onclick="speakById('spel')">🔊</button></h2>
+        <h2 id="s-title">Välj ett spel <button class="speak-btn" onclick="speakById('s-title')">🔊</button></h2>
         <div class="category-grid">
+            
             <div class="cat-card" onclick="window.location.href='lasning.html'">
                 <h3>📖 Lästräning</h3>
                 <p>Skriv ordet (3 bokstäver)</p>
             </div>
+
             <div class="cat-card" onclick="window.location.href='matte.html'">
                 <h3>➕ Matematik</h3>
                 <p>Träna 10-kompisar</p>
             </div>
+
         </div>
     </div>
 </div>
