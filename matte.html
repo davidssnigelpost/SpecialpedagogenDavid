@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matematik - 10-kompisar</title>
+    <style>
+        :root { --primary: #5d7a8c; --secondary: #a3b899; --bg: #fdfaf5; }
+        body { font-family: sans-serif; text-align: center; background: var(--bg); padding: 20px; color: #333; }
+        .game-card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 600px; margin: auto; }
+        
+        /* Prickar/Bildstöd */
+        .dots-wrapper { display: flex; justify-content: center; gap: 40px; margin: 20px 0; }
+        .dots-container { display: flex; flex-wrap: wrap; width: 100px; min-height: 60px; justify-content: center; border: 2px dashed #ccc; padding: 5px; border-radius: 10px; }
+        .dot { width: 18px; height: 18px; border-radius: 50%; margin: 3px; }
+        .dot.red { background: #e74c3c; }
+        .dot.blue { background: #3498db; }
+
+        .equation { font-size: 3.5rem; font-weight: bold; margin: 20px 0; }
+        input { font-size: 2.5rem; width: 120px; text-align: center; padding: 10px; border: 3px solid var(--primary); border-radius: 10px; }
+        
+        .timer { font-size: 1.2rem; font-weight: bold; color: #e74c3c; margin-bottom: 10px; }
+        .back-btn { margin-top: 30px; display: inline-block; padding: 10px 20px; background: #eee; text-decoration: none; color: #333; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="game-card">
+        <h1>10-kompisar</h1>
+        
+        <div id="setup">
+            <p>Träna på att hitta talkompisarna som blir 10.</p>
+            <input type="text" id="p-name" placeholder="Ditt namn" style="font-size: 1.5rem; width: 250px;"><br><br>
+            <button onclick="start()" style="padding:15px 30px; background:var(--secondary); color:white; border:none; border-radius:10px; cursor:pointer; font-size: 1.2rem;">Starta spel (2 min)</button>
+        </div>
+
+        <div id="active" style="display:none;">
+            <div class="timer">Tid: <span id="time">120</span>s</div>
+            
+            <div class="dots-wrapper">
+                <div id="d1" class="dots-container"></div>
+                <div id="d2" class="dots-container"></div>
+            </div>
+
+            <div class="equation">
+                <span id="m1">?</span> + <span id="m2">?</span> = 10
+            </div>
+            
+            <input type="number" id="ans" oninput="check()">
+            <p style="font-size: 1.2rem;">Poäng: <span id="score">0</span></p>
+        </div>
+
+        <div id="done" style="display:none;">
+            <h2>Tiden är ute! Bra jobbat.</h2>
+            <div id="highscore" style="text-align: left; display: inline-block; background: #f9f9f9; padding: 20px; border-radius: 10px; margin: 10px 0;"></div>
+            <br><button onclick="location.reload()" style="padding:10px 20px; cursor:pointer;">Spela igen</button>
+        </div>
+
+        <br>
+        <a href="index.html" class="back-btn">⬅ Tillbaka till huvudmenyn</a>
+    </div>
+
+<script>
+    let score=0, timeLeft=120, clock, missing=0;
+
+    function start() {
+        if(!document.getElementById('p-name').value) return alert("Skriv ditt namn!");
+        document.getElementById('setup').style.display = 'none';
+        document.getElementById('active').style.display = 'block';
+        next();
+        clock = setInterval(() => {
+            timeLeft--;
+            document.getElementById('time').innerText = timeLeft;
+            if(timeLeft <= 0) end();
+        }, 1000);
+    }
+
+    function next() {
+        let n = Math.floor(Math.random() * 11);
+        missing = 10 - n;
+        
+        document.getElementById('m1').innerText = n;
+        document.getElementById('m2').innerText = "?";
+        
+        drawDots('d1', n, 'red');
+        drawDots('d2', 0, 'blue');
+        
+        document.getElementById('ans').value = "";
+        document.getElementById('ans').focus();
+    }
+
+    function drawDots(id, count, color) {
+        const el = document.getElementById(id);
+        el.innerHTML = '';
+        for(let i=0; i<count; i++) {
+            const d = document.createElement('div');
+            d.className = 'dot ' + color;
+            el.appendChild(d);
+        }
+    }
+
+    function check() {
+        if(parseInt(document.getElementById('ans').value) === missing) {
+            score++;
+            document.getElementById('score').innerText = score;
+            next();
+        }
+    }
+
+    function end() {
+        clearInterval(clock);
+        document.getElementById('active').style.display = 'none';
+        document.getElementById('done').style.display = 'block';
+        
+        const name = document.getElementById('p-name').value;
+        saveScore(name, score);
+    }
+
+    function saveScore(name, score) {
+        let list = JSON.parse(localStorage.getItem('mathHigh') || '[]');
+        list.push({name, score});
+        list.sort((a,b) => b.score - a.score);
+        list = list.slice(0, 5);
+        localStorage.setItem('mathHigh', JSON.stringify(list));
+        
+        let h = "<strong>Topplista:</strong><br>";
+        list.forEach((s, i) => h += `${i+1}. ${s.name}: ${s.score} poäng<br>`);
+        document.getElementById('highscore').innerHTML = h;
+    }
+</script>
+</body>
+</html>
