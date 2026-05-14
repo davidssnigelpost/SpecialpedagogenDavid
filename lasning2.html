@@ -43,26 +43,20 @@
 <script>
     let score=0, timeLeft=120, clock, curW={}, audioCtx;
     
-    // Endast substantiv, grundform, exakt 4 bokstäver
+    // Slutgiltig städad lista: Häst, Fisk, Katt, Kaka, Måne, Anka, Bord, Kniv, Säng, Buss, Myra, Hand.
     const words = [
-        {w:'HÄST', i:'🐎'}, {w:'FISK', i:'🐟'}, {w:'SKOR', i:'👟'}, 
-        {w:'KATT', i:'🐱'}, {w:'KAKA', i:'🍪'}, {w:'MÅNE', i:'🌙'},
-        {w:'ANKA', i:'🦆'}, {w:'BORD', i:'🪑'}, {w:'KNIV', i:'🔪'},
-        {w:'SÄNG', i:'🛏️'}, {w:'BUSS', i:'🚌'}, {w:'GATA', i:'🛣️'}, 
-        {w:'MYRA', i:'🐜'}, {w:'SAX!', i:'✂️'}, {w:'HAND', i:'✋'},
-        {w:'BLOD', i:'🩸'}, {w:'VAGN', i:'🛒'}, {w:'SLOT', i:'🏰'}
-    ];
-
-    // Obs: Jag ändrade "SAXAR" till "SAX" (3) i förra, men här är den borttagen helt
-    // eller ersatt med ord som HAND, VAGN och SLOT (som i slott men 4 bokstäver).
-    // Låt oss köra på dessa säkra kort:
-    const safeWords = [
-        {w:'HÄST', i:'🐎'}, {w:'FISK', i:'🐟'}, {w:'SKOR', i:'👟'}, 
-        {w:'KATT', i:'🐱'}, {w:'KAKA', i:'🍪'}, {w:'MÅNE', i:'🌙'},
-        {w:'ANKA', i:'🦆'}, {w:'BORD', i:'🪑'}, {w:'KNIV', i:'🔪'},
-        {w:'SÄNG', i:'🛏️'}, {w:'BUSS', i:'🚌'}, {w:'GATA', i:'🛣️'}, 
-        {w:'MYRA', i:'🐜'}, {w:'HAND', i:'✋'}, {w:'SKÅL', i:'🥣'},
-        {w:'MÖSS', i:'🐭'}, {w:'KRIP', i:'🦞'}, {w:'STIG', i:'🌲'}
+        {w:'HÄST', i:'🐎'}, 
+        {w:'FISK', i:'🐟'}, 
+        {w:'KATT', i:'🐱'}, 
+        {w:'KAKA', i:'🍪'}, 
+        {w:'MÅNE', i:'🌙'},
+        {w:'ANKA', i:'🦆'}, 
+        {w:'BORD', i:'🪑'}, 
+        {w:'KNIV', i:'🔪'},
+        {w:'SÄNG', i:'🛏️'}, 
+        {w:'BUSS', i:'🚌'}, 
+        {w:'MYRA', i:'🐜'}, 
+        {w:'HAND', i:'✋'}
     ];
 
     function start() {
@@ -79,7 +73,7 @@
     }
 
     function next() {
-        curW = safeWords[Math.floor(Math.random()*safeWords.length)];
+        curW = words[Math.floor(Math.random()*words.length)];
         document.getElementById('display-img').innerText = curW.i;
         document.getElementById('ans').value = "";
         document.getElementById('ans').focus();
