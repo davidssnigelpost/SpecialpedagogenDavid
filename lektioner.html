@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lektionsupplägg - Specialpedagogik</title>
+    <style>
+        :root { --primary: #5d7a8c; --secondary: #a3b899; --bg: #fdfaf5; --text: #3e4444; }
+        body { font-family: sans-serif; line-height: 1.6; margin: 0; background: var(--bg); color: var(--text); padding: 20px; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { color: var(--primary); border-bottom: 3px solid var(--secondary); padding-bottom: 10px; }
+        .lesson-plan { background: #f9f9f9; border: 1px solid #eee; padding: 20px; border-radius: 15px; margin-bottom: 25px; }
+        .lesson-plan h2 { margin-top: 0; color: #444; }
+        .tag { display: inline-block; background: var(--secondary); color: white; padding: 4px 10px; border-radius: 5px; font-size: 0.8rem; margin-bottom: 10px; }
+        .back-btn { display: inline-block; margin-bottom: 20px; text-decoration: none; color: var(--primary); font-weight: bold; }
+        .speak-btn { cursor: pointer; background: #eee; border: none; border-radius: 50%; width: 30px; height: 30px; vertical-align: middle; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <a href="index.html" class="back-btn">⬅ Tillbaka till menyn</a>
+    
+    <h1 id="title">Lektionsupplägg <button class="speak-btn" onclick="speakById('title')">🔊</button></h1>
+    <p>Här hittar du strukturerade lektionsplaneringar som kombinerar teori med de digitala övningarna på sidan.</p>
+
+    <div class="lesson-plan" id="L1">
+        <span class="tag">LÄSNING / AVKODNING</span>
+        <h2>1. Intensiv ljudningsträning <button class="speak-btn" onclick="speakById('L1')">🔊</button></h2>
+        <p><strong>Mål:</strong> Öka elevens säkerhet i bokstav-ljud-koppling.</p>
+        <p><strong>Genomförande:</strong> 
+            1. Visa tre bokstäver på tavlan och ljuda dem tillsammans. 
+            2. Eleven tränar 5-10 minuter i "Tre bokstäver"-spelet. 
+            3. Avsluta med att skriva de tre orden eleven fick flest poäng på i sin skrivbok.</p>
+    </div>
+
+    <div class="lesson-plan" id="L2">
+        <span class="tag">MATEMATIK</span>
+        <h2>2. Automatisera 10-kompisar <button class="speak-btn" onclick="speakById('L2')">🔊</button></h2>
+        <p><strong>Mål:</strong> Att snabbt känna igen talkompisar utan att behöva räkna på fingrarna.</p>
+        <p><strong>Genomförande:</strong> 
+            1. Använd konkret material (t.ex. 10 pärlor) för att visa hur 7 blir 10 med 3 pärlor till. 
+            2. Spela "10-kompisar" på tid för att utmana snabbheten. 
+            3. Diskutera strategier: "Ser du mönstret i prickarna?".</p>
+    </div>
+
+</div>
+
+<script>
+    function speakById(id) {
+        window.speechSynthesis.cancel();
+        const text = document.getElementById(id).innerText.replace('🔊', '');
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'sv-SE';
+        window.speechSynthesis.speak(u);
+    }
+</script>
+
+</body>
+</html>
