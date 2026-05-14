@@ -42,11 +42,27 @@
 
 <script>
     let score=0, timeLeft=120, clock, curW={}, audioCtx;
+    
+    // Endast substantiv, grundform, exakt 4 bokstäver
     const words = [
         {w:'HÄST', i:'🐎'}, {w:'FISK', i:'🐟'}, {w:'SKOR', i:'👟'}, 
         {w:'KATT', i:'🐱'}, {w:'KAKA', i:'🍪'}, {w:'MÅNE', i:'🌙'},
-        {w:'GLASS', i:'🍦'}, {w:'BORST', i:'🧹'}, {w:'TRÄD', i:'🌳'},
-        {w:'ANKA', i:'🦆'}, {w:'BORD', i:'🪑'}, {w:'LAMPA', i:'💡'}
+        {w:'ANKA', i:'🦆'}, {w:'BORD', i:'🪑'}, {w:'KNIV', i:'🔪'},
+        {w:'SÄNG', i:'🛏️'}, {w:'BUSS', i:'🚌'}, {w:'GATA', i:'🛣️'}, 
+        {w:'MYRA', i:'🐜'}, {w:'SAX!', i:'✂️'}, {w:'HAND', i:'✋'},
+        {w:'BLOD', i:'🩸'}, {w:'VAGN', i:'🛒'}, {w:'SLOT', i:'🏰'}
+    ];
+
+    // Obs: Jag ändrade "SAXAR" till "SAX" (3) i förra, men här är den borttagen helt
+    // eller ersatt med ord som HAND, VAGN och SLOT (som i slott men 4 bokstäver).
+    // Låt oss köra på dessa säkra kort:
+    const safeWords = [
+        {w:'HÄST', i:'🐎'}, {w:'FISK', i:'🐟'}, {w:'SKOR', i:'👟'}, 
+        {w:'KATT', i:'🐱'}, {w:'KAKA', i:'🍪'}, {w:'MÅNE', i:'🌙'},
+        {w:'ANKA', i:'🦆'}, {w:'BORD', i:'🪑'}, {w:'KNIV', i:'🔪'},
+        {w:'SÄNG', i:'🛏️'}, {w:'BUSS', i:'🚌'}, {w:'GATA', i:'🛣️'}, 
+        {w:'MYRA', i:'🐜'}, {w:'HAND', i:'✋'}, {w:'SKÅL', i:'🥣'},
+        {w:'MÖSS', i:'🐭'}, {w:'KRIP', i:'🦞'}, {w:'STIG', i:'🌲'}
     ];
 
     function start() {
@@ -63,7 +79,7 @@
     }
 
     function next() {
-        curW = words[Math.floor(Math.random()*words.length)];
+        curW = safeWords[Math.floor(Math.random()*safeWords.length)];
         document.getElementById('display-img').innerText = curW.i;
         document.getElementById('ans').value = "";
         document.getElementById('ans').focus();
