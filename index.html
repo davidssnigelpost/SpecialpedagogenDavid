@@ -5,105 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Specialpedagogiskt Stöd</title>
     <style>
-        :root {
-            --primary: #5d7a8c;
-            --secondary: #a3b899;
-            --accent: #f29f80;
-            --bg: #fdfaf5;
-            --text: #3e4444;
-        }
-
-        body { 
-            font-family: 'Open Sans', Verdana, sans-serif; 
-            line-height: 1.8; 
-            margin: 0; 
-            background-color: var(--bg); 
-            color: var(--text); 
-        }
-
-        header { 
-            background-color: var(--primary); 
-            color: white; 
-            padding: 2rem 1rem; 
-            text-align: center; 
-            border-bottom: 8px solid var(--secondary);
-        }
-
-        nav { 
-            background: #fff; 
-            padding: 1rem; 
-            text-align: center; 
-            position: sticky; 
-            top: 0; 
-            box-shadow: 0 2px 15px rgba(0,0,0,0.1); 
-            z-index: 1000; 
-        }
-
-        nav button { 
-            margin: 0 10px; 
-            background: none;
-            border: none;
-            color: var(--primary); 
-            font-weight: bold; 
-            cursor: pointer; 
-            font-size: 1.1rem;
-        }
-
-        .container { max-width: 900px; margin: 20px auto; padding: 20px; }
-        
-        .page-section { display: none; padding: 30px; background: white; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        :root { --primary: #5d7a8c; --secondary: #a3b899; --bg: #fdfaf5; --text: #3e4444; }
+        body { font-family: sans-serif; line-height: 1.6; margin: 0; background: var(--bg); color: var(--text); }
+        header { background: var(--primary); color: white; padding: 20px; text-align: center; border-bottom: 5px solid var(--secondary); }
+        nav { background: white; padding: 10px; text-align: center; position: sticky; top: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 100; }
+        nav button { margin: 0 10px; padding: 10px; font-weight: bold; cursor: pointer; background: none; border: 1px solid #ccc; border-radius: 5px; }
+        .container { max-width: 800px; margin: 20px auto; padding: 20px; }
+        .page-section { display: none; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .active { display: block; }
-
-        .speak-btn { 
-            cursor: pointer; 
-            background: #eee; 
-            border: none; 
-            border-radius: 50%; 
-            width: 35px; 
-            height: 35px; 
-            font-size: 1.1rem;
-            margin-left: 10px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .fact-box {
-            background-color: #f0f4f0;
-            border-left: 6px solid var(--secondary);
-            padding: 20px;
-            margin: 20px 0;
-            border-radius: 0 15px 15px 0;
-        }
-
-        .category-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
-        .cat-card { 
-            background: #fff; 
-            padding: 30px; 
-            text-align: center; 
-            border-radius: 20px; 
-            cursor: pointer; 
-            border: 3px solid #eee; 
-        }
-
-        .game-area { display: none; text-align: center; padding: 20px; border: 4px solid var(--secondary); border-radius: 20px; }
-        .equation { font-size: 3rem; margin: 20px 0; font-weight: bold; }
-        
-        /* Bildstöd: Prickar */
-        .dots-wrapper { display: flex; justify-content: center; gap: 40px; margin-bottom: 20px; }
-        .dots-container { display: flex; flex-wrap: wrap; width: 100px; min-height: 50px; justify-content: center; align-content: flex-start; }
-        .dot { width: 16px; height: 16px; border-radius: 50%; margin: 2px; }
+        .speak-btn { cursor: pointer; background: #eee; border: none; border-radius: 50%; width: 35px; height: 35px; margin-left: 10px; font-size: 1rem; }
+        .fact-box { background: #f0f4f0; border-left: 5px solid var(--secondary); padding: 15px; margin: 15px 0; border-radius: 0 10px 10px 0; }
+        .category-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .cat-card { background: #fff; padding: 25px; text-align: center; border-radius: 15px; cursor: pointer; border: 2px solid #eee; }
+        .game-area { display: none; text-align: center; padding: 20px; border: 3px solid var(--secondary); border-radius: 15px; }
+        .dots-container { display: flex; flex-wrap: wrap; width: 100px; justify-content: center; margin: 10px auto; min-height: 40px; }
+        .dot { width: 15px; height: 15px; border-radius: 50%; margin: 2px; }
         .dot.red { background: #e74c3c; }
         .dot.blue { background: #3498db; }
-
-        input.game-input { font-size: 2rem; width: 180px; text-align: center; border: 2px solid var(--primary); border-radius: 10px; padding: 10px; }
+        input { font-size: 1.5rem; width: 150px; text-align: center; padding: 10px; margin: 10px; border: 2px solid #ccc; border-radius: 8px; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>Specialpedagogiskt Stöd <button class="speak-btn" onclick="speak('Specialpedagogiskt Stöd')">🔊</button></h1>
-    <p>En tillgänglig lärmiljö för alla <button class="speak-btn" onclick="speak('En tillgänglig lärmiljö för alla')">🔊</button></p>
+    <h1 id="t1">Specialpedagogiskt Stöd <button class="speak-btn" onclick="speakById('t1')">🔊</button></h1>
+    <p id="t2">En tillgänglig lärmiljö för alla <button class="speak-btn" onclick="speakById('t2')">🔊</button></p>
 </header>
 
 <nav>
@@ -115,164 +41,179 @@
 <div class="container">
 
     <div id="hem" class="page-section active">
-        <h2>Välkommen <button class="speak-btn" onclick="speak('Välkommen')">🔊</button></h2>
-        <p>Här hittar du material och stöd för att anpassa undervisningen. <button class="speak-btn" onclick="speak('Här hittar du material och stöd för att anpassa undervisningen.')">🔊</button></p>
-        
+        <h2 id="h1">Välkommen <button class="speak-btn" onclick="speakById('h1')">🔊</button></h2>
+        <p id="p1">Här hittar du material och stöd för att anpassa undervisningen. <button class="speak-btn" onclick="speakById('p1')">🔊</button></p>
         <div class="fact-box">
-            <h3>Bildstöd <button class="speak-btn" onclick="speak('Bildstöd. Bildstöd ökar elevernas självständighet och minskar stress.')">🔊</button></h3>
-            <p>Genom att använda bildstöd kan vi göra dagen förutsägbar och begriplig. <button class="speak-btn" onclick="speak('Genom att använda bildstöd kan vi göra dagen förutsägbar och begriplig.')">🔊</button></p>
+            <h3 id="h2">Bildstöd <button class="speak-btn" onclick="speakById('h2')">🔊</button></h3>
+            <p id="p2">Bildstöd ökar självständighet och minskar stress i klassrummet. <button class="speak-btn" onclick="speakById('p2')">🔊</button></p>
         </div>
     </div>
 
     <div id="tips" class="page-section">
-        <h2>De sju frågorna <button class="speak-btn" onclick="speak('De sju frågorna för tydliggörande pedagogik')">🔊</button></h2>
+        <h2 id="h3">De sju frågorna <button class="speak-btn" onclick="speakById('h3')">🔊</button></h2>
+        <p id="p3">Svara på dessa frågor för att skapa tydlighet: <button class="speak-btn" onclick="speakById('p3')">🔊</button></p>
         <div class="fact-box">
-            <p>En elev i behov av struktur behöver svar på dessa frågor: <button class="speak-btn" onclick="speak('En elev i behov av struktur behöver svar på dessa frågor:')">🔊</button></p>
-            <ul>
-                <li>Vad ska jag göra? <button class="speak-btn" onclick="speak('Vad ska jag göra?')">🔊</button></li>
-                <li>Var ska jag vara? <button class="speak-btn" onclick="speak('Var ska jag vara?')">🔊</button></li>
-                <li>Med vem ska jag vara? <button class="speak-btn" onclick="speak('Med vem ska jag vara?')">🔊</button></li>
-                <li>Hur länge ska det hålla på? <button class="speak-btn" onclick="speak('Hur länge ska det hålla på?')">🔊</button></li>
-                <li>Vad ska hända sen? <button class="speak-btn" onclick="speak('Vad ska hända sen?')">🔊</button></li>
-                <li>Vad behöver jag ha med mig? <button class="speak-btn" onclick="speak('Vad behöver jag ha med mig?')">🔊</button></li>
-                <li>Varför ska jag göra det? <button class="speak-btn" onclick="speak('Varför ska jag göra det?')">🔊</button></li>
+            <ul id="qlist">
+                <li>Vad ska jag göra?</li>
+                <li>Var ska jag vara?</li>
+                <li>Med vem ska jag vara?</li>
+                <li>Hur länge ska det hålla på?</li>
+                <li>Vad ska hända sen?</li>
+                <li>Vad behöver jag ha med mig?</li>
+                <li>Varför ska jag göra det?</li>
             </ul>
+            <button onclick="speakById('qlist')">🔊 Läs upp listan</button>
         </div>
     </div>
 
     <div id="spel" class="page-section">
         <div id="category-select">
-            <h2>Välj träning <button class="speak-btn" onclick="speak('Välj kategori. Lästräning eller matematikträning.')">🔊</button></h2>
+            <h2 id="h4">Välj träning <button class="speak-btn" onclick="speakById('h4')">🔊</button></h2>
             <div class="category-grid">
-                <div class="cat-card" onclick="openGame('reading')">
-                    <h3>📖 Lästräning</h3>
-                    <p>Skriv ordet (3 bokstäver)</p>
-                </div>
-                <div class="cat-card" onclick="openGame('math')">
-                    <h3>➕ Matematik</h3>
-                    <p>10-kompisar</p>
-                </div>
+                <div class="cat-card" onclick="openGame('read')"><h3>📖 Läsning</h3></div>
+                <div class="cat-card" onclick="openGame('math')"><h3>➕ Matte</h3></div>
             </div>
         </div>
 
-        <div id="reading-game-area" class="game-area">
-            <h2 id="read-title">Skriv ordet</h2>
+        <div id="read-game" class="game-area">
             <div id="read-setup">
-                <input type="text" id="read-name" placeholder="Ditt namn..." class="game-input"><br><br>
-                <button onclick="startGame('reading')" style="padding:15px; background:var(--secondary); border:none; color:white; border-radius:10px; cursor:pointer;">Starta</button>
+                <input type="text" id="read-name" placeholder="Ditt namn">
+                <button onclick="startGame('read')" style="padding:10px; background:var(--secondary); color:white; border:none; border-radius:5px; cursor:pointer;">Starta</button>
             </div>
             <div id="read-active" style="display:none;">
-                <div id="read-img" style="font-size: 7rem; margin: 10px;">☀️</div>
-                <input type="text" id="read-ans" class="game-input" maxlength="3" oninput="checkReading()" style="text-transform: uppercase;">
-                <p>Poäng: <span id="read-score">0</span> | Tid: <span id="read-timer">120</span>s</p>
+                <div id="read-img" style="font-size: 5rem;">☀️</div>
+                <input type="text" id="read-ans" maxlength="3" oninput="checkRead()" placeholder="ORD">
+                <p>Poäng: <span id="read-score">0</span> | Tid: <span id="read-timer">120</span></p>
             </div>
         </div>
 
-        <div id="math-game-area" class="game-area">
-            <h2>10-kompisar</h2>
+        <div id="math-game" class="game-area">
             <div id="math-setup">
-                <input type="text" id="math-name" placeholder="Ditt namn..." class="game-input"><br><br>
-                <button onclick="startGame('math')" style="padding:15px; background:var(--secondary); border:none; color:white; border-radius:10px; cursor:pointer;">Starta</button>
+                <input type="text" id="math-name" placeholder="Ditt namn">
+                <button onclick="startGame('math')" style="padding:10px; background:var(--secondary); color:white; border:none; border-radius:5px; cursor:pointer;">Starta</button>
             </div>
             <div id="math-active" style="display:none;">
-                <div class="dots-wrapper">
-                    <div id="dots1" class="dots-container"></div>
-                    <div id="dots2" class="dots-container"></div>
+                <div style="display:flex; justify-content:center; gap:20px;">
+                    <div id="d1" class="dots-container"></div>
+                    <div id="d2" class="dots-container"></div>
                 </div>
-                <div class="equation">
-                    <span id="m-n1">?</span> + <span id="m-n2">?</span> = 10
-                </div>
-                <input type="number" id="math-ans" class="game-input" oninput="checkMath()">
-                <p>Poäng: <span id="math-score">0</span> | Tid: <span id="math-timer">120</span>s</p>
+                <div style="font-size:2.5rem;"><span id="m1">?</span> + <span id="m2">?</span> = 10</div>
+                <input type="number" id="math-ans" oninput="checkMath()">
+                <p>Poäng: <span id="math-score">0</span> | Tid: <span id="math-timer">120</span></p>
             </div>
         </div>
 
-        <div id="game-over" class="game-area">
-            <h2 id="final-msg">Tiden är ute!</h2>
-            <div id="highscore-box" style="text-align:left; max-width:250px; margin:20px auto; background:#f9f9f9; padding:15px; border-radius:10px;"></div>
-            <button onclick="location.reload()" style="padding:10px; cursor:pointer;">Spela igen</button>
+        <div id="over" class="game-area">
+            <h2>Klar!</h2>
+            <div id="score-box" style="text-align:left; display:inline-block;"></div>
+            <br><button onclick="location.reload()">Spela igen</button>
         </div>
     </div>
 </div>
 
 <script>
     // 1. NAVIGATION
-    function showPage(pageId) {
-        // Dölj alla sektioner
-        document.querySelectorAll('.page-section').forEach(section => {
-            section.classList.remove('active');
-        });
-        // Visa vald sektion
-        document.getElementById(pageId).classList.add('active');
+    function showPage(id) {
+        const sections = document.getElementsByClassName('page-section');
+        for (let s of sections) { s.classList.remove('active'); }
+        document.getElementById(id).classList.add('active');
         
-        // Återställ spelmenyn om man klickar på "Spel"
         document.getElementById('category-select').style.display = 'block';
-        document.querySelectorAll('.game-area').forEach(ga => ga.style.display = 'none');
+        document.getElementById('read-game').style.display = 'none';
+        document.getElementById('math-game').style.display = 'none';
+        document.getElementById('over').style.display = 'none';
     }
 
-    // 2. UPPLÄSNING (TALSYNTES)
-    function speak(text) {
-        window.speechSynthesis.cancel(); // Stoppa pågående tal
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'sv-SE';
-        window.speechSynthesis.speak(utterance);
+    // 2. LJUD
+    function speakById(id) {
+        window.speechSynthesis.cancel();
+        const text = document.getElementById(id).innerText.replace('🔊', '');
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'sv-SE';
+        window.speechSynthesis.speak(u);
     }
 
-    // 3. SPEL-VARIABLER
-    let activeMode = '';
-    let score = 0;
-    let timer;
-    let secondsLeft = 120;
-    let currentTarget = 10;
-    let missingNum = 0;
-    let currentWordObj = {};
+    // 3. SPEL LOGIK
+    let mode='', score=0, time=120, clock, mathMiss=0, curW={};
+    const words = [{w:'SOL',i:'☀️'},{w:'BIL',i:'🚗'},{w:'HUS',i:'🏠'},{w:'MUS',i:'🐭'},{w:'TÅG',i:'🚂'}];
 
-    const wordList = [
-        {w:'SOL', i:'☀️'}, {w:'BIL', i:'🚗'}, {w:'HUS', i:'🏠'}, 
-        {w:'MUS', i:'🐭'}, {w:'TÅG', i:'🚂'}, {w:'FIS', i:'🐟'}, {w:'BÅT', i:'⛵'}
-    ];
-
-    // 4. SPEL-FUNKTIONER
-    function openGame(mode) {
-        activeMode = mode;
+    function openGame(m) {
+        mode = m;
         document.getElementById('category-select').style.display = 'none';
-        document.getElementById(mode + '-game-area').style.display = 'block';
+        document.getElementById(m + '-game').style.display = 'block';
     }
 
-    function startGame(mode) {
-        const playerName = document.getElementById(mode + '-name').value;
-        if(!playerName) return alert("Skriv ditt namn!");
-
-        document.getElementById(mode + '-setup').style.display = 'none';
-        document.getElementById(mode + '-active').style.display = 'block';
-        
-        score = 0;
-        secondsLeft = 120;
-        
-        if(mode === 'reading') nextReading();
-        else nextMath();
-
-        timer = setInterval(() => {
-            secondsLeft--;
-            document.getElementById(mode + '-timer').innerText = secondsLeft;
-            if(secondsLeft <= 0) finishGame();
+    function startGame(m) {
+        const name = document.getElementById(m + '-name').value;
+        if(!name) return alert("Skriv ditt namn!");
+        document.getElementById(m + '-setup').style.display = 'none';
+        document.getElementById(m + '-active').style.display = 'block';
+        score = 0; time = 120;
+        m === 'read' ? nextR() : nextM();
+        clock = setInterval(() => {
+            time--;
+            document.getElementById(m + '-timer').innerText = time;
+            if(time <= 0) stopG();
         }, 1000);
     }
 
-    // MATTE
-    function nextMath() {
-        let n1 = Math.floor(Math.random() * 11);
-        missingNum = 10 - n1;
-        
-        document.getElementById('m-n1').innerText = n1;
-        document.getElementById('m-n2').innerText = "?";
-        
-        // Rita prickar
-        drawDots('dots1', n1, 'red');
-        drawDots('dots2', 0, 'blue'); // Nollställ den andra rutan
-        
+    function nextR() {
+        curW = words[Math.floor(Math.random()*words.length)];
+        document.getElementById('read-img').innerText = curW.i;
+        document.getElementById('read-ans').value = "";
+        document.getElementById('read-ans').focus();
+    }
+
+    function checkRead() {
+        if(document.getElementById('read-ans').value.toUpperCase() === curW.w) {
+            score++; document.getElementById('read-score').innerText = score; nextR();
+        }
+    }
+
+    function nextM() {
+        let n = Math.floor(Math.random()*11);
+        mathMiss = 10 - n;
+        document.getElementById('m1').innerText = n;
+        document.getElementById('m2').innerText = "?";
+        drawD('d1', n, 'red'); drawD('d2', 0, 'blue');
         document.getElementById('math-ans').value = "";
         document.getElementById('math-ans').focus();
     }
 
-    function draw
+    function drawD(id, c, col) {
+        const el = document.getElementById(id);
+        el.innerHTML = '';
+        for(let i=0; i<c; i++) {
+            const d = document.createElement('div');
+            d.className = 'dot ' + col;
+            el.appendChild(d);
+        }
+    }
+
+    function checkMath() {
+        if(parseInt(document.getElementById('math-ans').value) === mathMiss) {
+            score++; document.getElementById('math-score').innerText = score; nextM();
+        }
+    }
+
+    function stopG() {
+        clearInterval(clock);
+        document.getElementById('read-game').style.display = 'none';
+        document.getElementById('math-game').style.display = 'none';
+        document.getElementById('over').style.display = 'block';
+        
+        const name = document.getElementById(mode + '-name').value;
+        let key = mode + 'Score';
+        let list = JSON.parse(localStorage.getItem(key) || '[]');
+        list.push({name, score});
+        list.sort((a,b) => b.score - a.score);
+        list = list.slice(0, 5);
+        localStorage.setItem(key, JSON.stringify(list));
+        
+        let h = "<strong>Resultat:</strong><br>";
+        list.forEach((s, i) => h += (i+1) + ". " + s.name + ": " + s.score + "p<br>");
+        document.getElementById('score-box').innerHTML = h;
+    }
+</script>
+</body>
+</html>
