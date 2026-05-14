@@ -12,6 +12,7 @@
         input { font-size: 2rem; width: 150px; text-align: center; padding: 10px; border: 3px solid var(--primary); border-radius: 10px; text-transform: uppercase; }
         .back-btn { margin-top: 30px; display: inline-block; padding: 10px 20px; background: #eee; text-decoration: none; color: #333; border-radius: 5px; }
         .timer { font-weight: bold; color: #e74c3c; font-size: 1.2rem; }
+        button { padding:15px; background:var(--secondary); color:white; border:none; border-radius:10px; cursor:pointer; font-size:1.1rem; }
     </style>
 </head>
 <body>
@@ -20,7 +21,7 @@
         <h1>Tre bokstäver</h1>
         <div id="setup">
             <input type="text" id="p-name" placeholder="Ditt namn"><br><br>
-            <button onclick="start()" style="padding:15px; background:var(--secondary); color:white; border:none; border-radius:10px; cursor:pointer;">Starta 2-minutersspel</button>
+            <button onclick="start()">Starta 2-minutersspel</button>
         </div>
 
         <div id="active" style="display:none;">
@@ -40,14 +41,19 @@
     </div>
 
 <script>
-    let score=0, timeLeft=120, clock, curW={};
+    let score=0, timeLeft=120, clock, curW={}, audioCtx;
     const words = [
         {w:'SOL', i:'☀️'}, {w:'BIL', i:'🚗'}, {w:'HUS', i:'🏠'}, 
-        {w:'MUS', i:'🐭'}, {w:'TÅG', i:'🚂'}, {w:'BÅT', i:'⛵'}
+        {w:'MUS', i:'🐭'}, {w:'TÅG', i:'🚂'}, {w:'BÅT', i:'⛵'},
+        {w:'ÖGA', i:'👁️'}, {w:'NÄS', i:'👃'}, {w:'FOT', i:'🦶'}
     ];
 
     function start() {
         if(!document.getElementById('p-name').value) return alert("Skriv namn!");
+        
+        // Starta ljudsystemet
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
         document.getElementById('setup').style.display = 'none';
         document.getElementById('active').style.display = 'block';
         next();
@@ -68,27 +74,25 @@
     function check() {
         if(document.getElementById('ans').value.toUpperCase() === curW.w) {
             score++;
+            playSuccessSound();
             document.getElementById('score').innerText = score;
             next();
         }
     }
+
     function playSuccessSound() {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
-
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5-not
-        oscillator.frequency.exponentialRampToValueAtTime(1046.50, audioCtx.currentTime + 0.1); // Svep uppåt
-        
-        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-
-        oscillator.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-
-        oscillator.start();
-        oscillator.stop(audioCtx.currentTime + 0.2);
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+        osc.frequency.exponentialRampToValueAtTime(1046.50, audioCtx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.2);
     }
 
     function end() {
