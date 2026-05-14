@@ -42,10 +42,21 @@
 
 <script>
     let score=0, timeLeft=120, clock, curW={}, audioCtx;
+    
+    // Uppdaterad lista: Endast 3-bokstävers substantiv i entall
     const words = [
-        {w:'SOL', i:'☀️'}, {w:'BIL', i:'🚗'}, {w:'HUS', i:'🏠'}, 
-        {w:'MUS', i:'🐭'}, {w:'TÅG', i:'🚂'}, {w:'BÅT', i:'⛵'},
-        {w:'ÖGA', i:'👁️'}, {w:'NÄS', i:'👃'}, {w:'FOT', i:'🦶'}
+        {w:'SOL', i:'☀️'}, 
+        {w:'BIL', i:'🚗'}, 
+        {w:'HUS', i:'🏠'}, 
+        {w:'MUS', i:'🐭'}, 
+        {w:'TÅG', i:'🚂'}, 
+        {w:'BÅT', i:'⛵'},
+        {w:'FOT', i:'🦶'},
+        {w:'NÄT', i:'🕸️'},
+        {w:'SAX', i:'✂️'},
+        {w:'ÖGA', i:'👁️'},
+        {w:'LÖV', i:'🍃'},
+        {w:'BOK', i:'📖'}
     ];
 
     function start() {
@@ -85,7 +96,7 @@
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); 
         osc.frequency.exponentialRampToValueAtTime(1046.50, audioCtx.currentTime + 0.1);
         gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
