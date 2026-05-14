@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lästräning - Fyra bokstäver</title>
+    <style>
+        :root { --primary: #5d7a8c; --secondary: #a3b899; --bg: #fdfaf5; }
+        body { font-family: sans-serif; text-align: center; background: var(--bg); padding: 20px; }
+        .game-card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 500px; margin: auto; }
+        .img-display { font-size: 8rem; margin: 20px; }
+        input { font-size: 2rem; width: 180px; text-align: center; padding: 10px; border: 3px solid var(--primary); border-radius: 10px; text-transform: uppercase; }
+        .back-btn { margin-top: 30px; display: inline-block; padding: 10px 20px; background: #eee; text-decoration: none; color: #333; border-radius: 5px; }
+        .timer { font-weight: bold; color: #e74c3c; font-size: 1.2rem; }
+        button { padding:15px; background:var(--secondary); color:white; border:none; border-radius:10px; cursor:pointer; font-size:1.1rem; }
+    </style>
+</head>
+<body>
+
+    <div class="game-card">
+        <h1>Fyra bokstäver</h1>
+        <div id="setup">
+            <input type="text" id="p-name" placeholder="Ditt namn"><br><br>
+            <button onclick="start()">Starta 2-minutersspel</button>
+        </div>
+
+        <div id="active" style="display:none;">
+            <div class="timer">Tid kvar: <span id="time">120</span>s</div>
+            <div class="img-display" id="display-img">❓</div>
+            <input type="text" id="ans" maxlength="4" oninput="check()">
+            <p>Poäng: <span id="score">0</span></p>
+        </div>
+
+        <div id="done" style="display:none;">
+            <h2>Bra jobbat!</h2>
+            <p id="res"></p>
+            <button onclick="location.reload()">Spela igen</button>
+        </div>
+
+        <a href="index.html" class="back-btn">⬅ Tillbaka till huvudmenyn</a>
+    </div>
+
+<script>
+    let score=0, timeLeft=120, clock, curW={}, audioCtx;
+    const words = [
+        {w:'HÄST', i:'🐎'}, {w:'FISK', i:'🐟'}, {w:'SKOR', i:'👟'}, 
+        {w:'KATT', i:'🐱'}, {w:'KAKA', i:'🍪'}, {w:'MÅNE', i:'🌙'},
+        {w:'GLASS', i:'🍦'}, {w:'BORST', i:'🧹'}, {w:'TRÄD', i:'🌳'},
+        {w:'ANKA', i:'🦆'}, {w:'BORD', i:'🪑'}, {w:'LAMPA', i:'💡'}
+    ];
+
+    function start() {
+        if(!document.getElementById('p-name').value) return alert("Skriv namn!");
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        document.getElementById('setup').style.display = 'none';
+        document.getElementById('active').style.display = 'block';
+        next();
+        clock = setInterval(() => {
+            timeLeft--;
+            document.getElementById('time').innerText = timeLeft;
+            if(timeLeft <= 0) end();
+        }, 1000);
+    }
+
+    function next() {
+        curW = words[Math.floor(Math.random()*words.length)];
+        document.getElementById('display-img').innerText = curW.i;
+        document.getElementById('ans').value = "";
+        document.getElementById('ans').focus();
+    }
+
+    function check() {
+        if(document.getElementById('ans').value.toUpperCase() === curW.w) {
+            score++;
+            playSuccessSound();
+            document.getElementById('score').innerText = score;
+            next();
+        }
+    }
+
+    function playSuccessSound() {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); 
+        osc.frequency.exponentialRampToValueAtTime(1046.50, audioCtx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.2);
+    }
+
+    function end() {
+        clearInterval(clock);
+        document.getElementById('active').style.display = 'none';
+        document.getElementById('done').style.display = 'block';
+        document.getElementById('res').innerText = score + " poäng!";
+    }
+</script>
+</body>
+</html>
