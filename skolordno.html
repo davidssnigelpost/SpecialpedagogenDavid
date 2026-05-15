@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skolordförråd NO</title>
+    <style>
+        :root { --primary: #2c3e50; --secondary: #27ae60; --bg: #f0f9f4; }
+        body { font-family: sans-serif; text-align: center; background: var(--bg); padding: 20px; }
+        .game-card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 600px; margin: auto; }
+        .word-display { font-size: 2.8rem; font-weight: bold; color: var(--primary); margin: 20px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .option-btn { background: #f8f9fa; border: 3px solid #eee; padding: 20px; font-size: 4rem; border-radius: 15px; cursor: pointer; transition: 0.2s; }
+        .option-btn:hover { border-color: var(--secondary); background: #fff; }
+        .back-btn { margin-top: 30px; display: inline-block; padding: 10px 20px; background: #eee; text-decoration: none; color: #333; border-radius: 5px; }
+        .speak-btn { cursor: pointer; background: #eee; border: none; border-radius: 50%; width: 45px; height: 45px; margin-left: 15px; font-size: 1.2rem; }
+        button.start-btn { padding:15px 30px; background:var(--secondary); color:white; border:none; border-radius:10px; cursor:pointer; font-size:1.2rem; }
+        .progress { color: var(--secondary); font-weight: bold; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="game-card">
+        <h1>NO-ordförrådet</h1>
+        <p>Träna begrepp inom Natur och Miljö</p>
+
+        <div id="setup">
+            <input type="text" id="p-name" placeholder="Skriv ditt namn" style="padding:10px; font-size:1rem; border-radius:5px; border:1px solid #ccc;"><br><br>
+            <button class="start-btn" onclick="start()">Starta NO-utmaningen</button>
+        </div>
+
+        <div id="active" style="display:none;">
+            <div class="progress">Fråga <span id="count">0</span> av 30</div>
+            <div class="word-display">
+                <span id="target-word">ORD</span>
+                <button class="speak-btn" onclick="speakWord()">🔊</button>
+            </div>
+            <div class="options-grid" id="options"></div>
+            <p>Poäng: <span id="score">0</span></p>
+        </div>
+
+        <div id="done" style="display:none;">
+            <h2>Snyggt jobbat, NO-expert!</h2>
+            <p id="res"></p>
+            <button class="start-btn" onclick="location.reload()">Spela igen</button>
+        </div>
+
+        <a href="index.html" class="back-btn">⬅ Tillbaka till menyn</a>
+    </div>
+
+<script>
+    let score=0, totalCount=0, curQ={}, audioCtx;
+    
+    // Förbättrad lista med mer exakta bilder för NO-begrepp
+    const noQuestions = [
+        {w:'Lunga', i:'🫁', alt:['🧠', '🦷', '👂']},
+        {w:'Rötter', i:'🌱', alt:['🌳', '🍎', '🪵']}, 
+        {w:'Flyta', i:'🛶', alt:['⚓', '🪨', '🔨']},
+        {w:'Sjunka', i:'⚓', alt:['🎈', '☁️', '🦢']},
+        {w:'Smälta', i:'💧', alt:['🧊', '💎', '🧱']},
+        {w:'Stjärna', i:'⭐', alt:['🌙', '☁️', '⚡']},
+        {w:'Planeten', i:'🌍', alt:['🌕', '🌞', '☄️']},
+        {w:'Experiment', i:'🧪', alt:['🎨', '🎷', '⚽']},
+        {w:'Förstoring', i:'🔍', alt:['🕶️', '📸', '📺']},
+        {w:'Lövträd', i:'🌳', alt:['🌲', '🌵', '🍄']},
+        {w:'Barrträd', i:'🌲', alt:['🌳', '🌻', '🌾']},
+        {w:'Årstid', i:'🍂', alt:['⏰', '📅', '📏']},
+        {w:'Vinterdvala', i:'💤', alt:['🐦', '🦋', '🐝']}, // Bytte björn mot sömnsymbol
+        {w:'Livscykel', i:'🔄', alt:['🪰', '🦗', '🕷️']},
+        {w:'Kretslopp', i:'♻️', alt:['🛑', '⚠️', '⬆️']},
+        {w:'Flyttfågel', i:'🦢', alt:['🐧', '🐓', '🦉']},
+        {w:'Insekt', i:'🐞', alt:['🐶', '🐟', '🐦']},
+        {w:'Däggdjur', i:'🐄', alt:['🦎', '🦆', '🕷️']},
+        {w:'Energi', i:'⚡', alt:['💧', '🪨', '💨']},
+        {w:'Vätska', i:'🥛', alt:['🧊', '💨', '🧱']},
+        {w:'Gas', i:'💨', alt:['💧', '🪨', '🪵']},
+        {w:'Fast form', i:'🧊', alt:['💧', '💨', '🌊']},
+        {w:'Ljudvåg', i:'🔊', alt:['🔦', '🌡️', '⚖️']},
+        {w:'Ljus', i:'💡', alt:['🔈', '🥶', '👃']},
+        {w:'Skugga', i:'👤', alt:['☀️', '🌈', '🎨']},
+        {w:'Kompass', i:'🧭', alt:['⌚', '📱', '📸']},
+        {w:'Tyngdkraft', i:'⬇️', alt:['🎈', '🚀', '☁️']}, 
+        {w:'Miljö', i:'🏞️', alt:['🏢', '🧱', '🚗']},
+        {w:'Återvinning', i:'♻️', alt:['🗑️', '🛍️', '📦']},
+        {w:'Termometer', i:'🌡️', alt:['📏', '⏲️', '⚖️']}
+    ];
+
+    let gamePool = [];
+
+    function start() {
+        if(!document.getElementById('p-name').value) return alert("Skriv namn!");
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        gamePool = [...noQuestions].sort(() => Math.random() - 0.5);
+        score = 0; totalCount = 0;
+        document.getElementById('setup').style.display = 'none';
+        document.getElementById('active').style.display = 'block';
+        next();
+    }
+
+    function next() {
+        if(gamePool.length === 0) return end();
+        totalCount++;
+        curQ = gamePool.pop();
+        document.getElementById('count').innerText = totalCount;
+        document.getElementById('target-word').innerText = curQ.w;
+        const opts = [...curQ.alt, curQ.i].sort(() => Math.random() - 0.5);
+        const div = document.getElementById('options');
+        div.innerHTML = '';
+        opts.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => check(opt);
+            div.appendChild(btn);
+        });
+    }
+
+    function check(val) {
+        if(val === curQ.i) {
+            score++;
+            playSuccessSound();
+            document.getElementById('score').innerText = score;
+            next();
+        } else {
+            alert("Försök hitta bilden för: " + curQ.w);
+        }
+    }
+
+    function speakWord() {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(curQ.w);
+        u.lang = 'sv-SE';
+        window.speechSynthesis.speak(u);
+    }
+
+    function playSuccessSound() {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); 
+        osc.frequency.exponentialRampToValueAtTime(1046.50, audioCtx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.2);
+    }
+
+    function end() {
+        document.getElementById('active').style.display = 'none';
+        document.getElementById('done').style.display = 'block';
+        document.getElementById('res').innerText = `Du hittade ${score} av 30 NO-begrepp!`;
+    }
+</script>
+</body>
+</html>
