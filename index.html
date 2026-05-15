@@ -3,84 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Specialpedagogiskt Stöd - Startsida</title>
+    <title>Specialpedagogiskt Stöd - Meny</title>
     <style>
-        :root { --primary: #5d7a8c; --secondary: #a3b899; --bg: #fdfaf5; }
-        body { font-family: sans-serif; background: var(--bg); margin: 0; padding: 20px; text-align: center; }
-        header { background: var(--primary); color: white; padding: 30px; border-radius: 15px; margin-bottom: 30px; }
-        
-        .grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
-            gap: 20px; 
-            max-width: 900px; 
-            margin: 0 auto; 
+        :root { 
+            --primary: #5d7a8c; 
+            --secondary: #a3b899; 
+            --no-color: #27ae60;
+            --bg: #fdfaf5; 
+            --text: #3e4444; 
         }
-
-        .card { 
-            background: white; 
-            padding: 30px; 
-            border-radius: 20px; 
-            border: 4px solid #eee; 
-            cursor: pointer; 
-            text-decoration: none; 
-            color: #333; 
-            transition: 0.3s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        .card h3 { margin: 15px 0 5px 0; font-size: 1.5rem; }
-        .card p { margin: 0; color: #666; }
-
-        /* Färg för Skolord Steg 1 */
-        .gold { border-color: #f1c40f; background: #fffdf0; }
-        /* Färg för Skolord NO (Ditt nya spel!) */
-        .green { border-color: #27ae60; background: #f0f9f4; }
+        body { font-family: sans-serif; line-height: 1.6; margin: 0; background: var(--bg); color: var(--text); }
+        header { background: var(--primary); color: white; padding: 20px; text-align: center; border-bottom: 5px solid var(--secondary); }
         
-        .icon { font-size: 3rem; }
+        .container { max-width: 900px; margin: 20px auto; padding: 20px; }
+        .category-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        
+        /* Kort-design */
+        .cat-card { 
+            background: #fff; padding: 20px; text-align: center; border-radius: 15px; 
+            cursor: pointer; border: 3px solid #eee; transition: 0.3s; 
+            display: flex; flex-direction: column; justify-content: center; min-height: 140px; 
+        }
+        .cat-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+        .cat-card h3 { margin: 10px 0 5px 0; font-size: 1.3rem; }
+        .cat-card p { margin: 0; font-size: 0.9rem; color: #666; }
+
+        /* Färger */
+        .gold-card { border-color: #f1c40f; background: #fffdf0; }
+        .no-card { border-color: var(--no-color); background: #f0f9f4; }
+        
+        .icon { font-size: 2.5rem; }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Specialpedagogiskt Stöd</h1>
-        <p>Välj en övning nedan för att börja träna!</p>
-    </header>
+<header>
+    <h1>Specialpedagogiskt Stöd</h1>
+    <p>Välj ett spel för att börja träna</p>
+</header>
 
-    <div class="grid">
-
-        <div class="card gold" onclick="window.location.href='skolord.html'">
+<div class="container">
+    <div class="category-grid">
+        
+        <div class="cat-card gold-card" onclick="window.location.href='skolord.html'">
             <span class="icon">🎓</span>
             <h3>Skolord Steg 1</h3>
             <p>Träna de 40 orden från bedömningen</p>
         </div>
 
-        <div class="card green" onclick="window.location.href='skolordno.html'">
+        <div class="cat-card no-card" onclick="window.location.href='skolordno.html'">
             <span class="icon">🌿</span>
             <h3>Skolord NO</h3>
             <p>30 begrepp om natur och miljö</p>
         </div>
 
-        <div class="card" onclick="window.location.href='lasning.html'">
+        <div class="cat-card" onclick="window.location.href='lasning.html'">
             <span class="icon">📖</span>
-            <h3>Lästräning</h3>
+            <h3>Lästräning 1</h3>
             <p>Skriv ord med 3 bokstäver</p>
         </div>
 
-        <div class="card" onclick="window.location.href='matte.html'">
+        <div class="cat-card" onclick="window.location.href='lasning2.html'">
+            <span class="icon">📚</span>
+            <h3>Lästräning 2</h3>
+            <p>Skriv ord med 4 bokstäver</p>
+        </div>
+
+        <div class="cat-card" onclick="window.location.href='matte.html'">
             <span class="icon">➕</span>
             <h3>Matematik</h3>
             <p>Träna på 10-kompisar</p>
         </div>
 
     </div>
+</div>
 
-    <footer style="margin-top: 50px; color: #999;">
-        <p>Gå till <a href="lektioner.html">Lektioner</a> | <a href="index.html">Hem</a></p>
-    </footer>
+<footer style="text-align: center; margin-top: 40px; padding: 20px; color: #888;">
+    <p><a href="lektioner.html" style="color: #5d7a8c; text-decoration: none; font-weight: bold;">Lektionsmaterial</a></p>
+</footer>
 
 </body>
 </html>
