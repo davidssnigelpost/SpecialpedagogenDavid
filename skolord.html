@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skolords-utmaningen</title>
+    <style>
+        :root { --primary: #5d7a8c; --secondary: #a3b899; --bg: #fdfaf5; }
+        body { font-family: sans-serif; text-align: center; background: var(--bg); padding: 20px; }
+        .game-card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 600px; margin: auto; }
+        .word-display { font-size: 2.8rem; font-weight: bold; color: var(--primary); margin: 20px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .option-btn { background: #f8f9fa; border: 3px solid #eee; padding: 20px; font-size: 4rem; border-radius: 15px; cursor: pointer; transition: 0.2s; }
+        .option-btn:hover { border-color: var(--secondary); background: #fff; }
+        .back-btn { margin-top: 30px; display: inline-block; padding: 10px 20px; background: #eee; text-decoration: none; color: #333; border-radius: 5px; }
+        .speak-btn { cursor: pointer; background: #eee; border: none; border-radius: 50%; width: 45px; height: 45px; margin-left: 15px; font-size: 1.2rem; }
+        button.start-btn { padding:15px 30px; background:var(--secondary); color:white; border:none; border-radius:10px; cursor:pointer; font-size:1.2rem; }
+        .category-info { color: #888; font-style: italic; margin-bottom: 5px; font-size: 0.9rem; }
+        .progress { color: var(--primary); font-weight: bold; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="game-card">
+        <h1>Skolords-utmaningen</h1>
+        <p>Hitta rätt bild till ordet!</p>
+
+        <div id="setup">
+            <input type="text" id="p-name" placeholder="Skriv ditt namn" style="padding:10px; font-size:1rem; border-radius:5px; border:1px solid #ccc;"><br><br>
+            <button class="start-btn" onclick="start()">Starta övningen</button>
+        </div>
+
+        <div id="active" style="display:none;">
+            <div class="progress">Fråga <span id="count">0</span> av 40</div>
+            <div class="category-info" id="cat-info">Kategori</div>
+            <div class="word-display">
+                <span id="target-word">ORD</span>
+                <button class="speak-btn" onclick="speakWord()">🔊</button>
+            </div>
+            <div class="options-grid" id="options"></div>
+            <p>Poäng: <span id="score">0</span></p>
+        </div>
+
+        <div id="done" style="display:none;">
+            <h2>Fantastiskt!</h2>
+            <p id="res"></p>
+            <button class="start-btn" onclick="location.reload()">Spela igen</button>
+        </div>
+
+        <a href="index.html" class="back-btn">⬅ Tillbaka till menyn</a>
+    </div>
+
+<script>
+    let score=0, totalCount=0, curQ={}, audioCtx;
+    
+    // Komplett ordlista baserad på PDF:ens fyra delar (Steg 1)
+    const questions = [
+        // SKOLORD
+        {w:'Stryka under', i:'下', cat:'Skolord', alt:['✏️', '❌', '📖']},
+        {w:'Oordning', i:'🌪️', cat:'Skolord', alt:['🧹', '📏', '📦']},
+        {w:'Ringa in', i:'⭕', cat:'Skolord', alt:['❌', '➕', '➖']},
+        {w:'Båda', i:'👥', cat:'Skolord', alt:['👤', '🚫', '🔢']},
+        {w:'Olika', i:'🍎🍏', cat:'Skolord', alt:['🍎🍎', '1️⃣', '⚪']},
+        {w:'Arbeta', i:'🔨', cat:'Skolord', alt:['💤', '🎈', '🍦']},
+        {w:'Underst', i:'👇', cat:'Skolord', alt:['👆', '👉', '👈']},
+        {w:'Bibliotek', i:'📚', cat:'Skolord', alt:['⚽', '🚑', '🍕']},
+        {w:'Överskrift', i:'📝', cat:'Skolord', alt:['📄', '📥', '🗑️']},
+        {w:'Mellan', i:'↔️', cat:'Skolord', alt:['⬆️', '⬇️', '🔴']},
+
+        // LÄSEBOK
+        {w:'Kuvert', i:'✉️', cat:'Läseboken', alt:['📖', '📦', '🗞️']},
+        {w:'Möbler', i:'🛋️', cat:'Läseboken', alt:['🚗', '🌳', '👕']},
+        {w:'Vuxen', i:'🧔', cat:'Läseboken', alt:['👶', '🐱', '🧸']},
+        {w:'Marknad', i:'🎪', cat:'Läseboken', alt:['🛁', '🛌', '📺']},
+        {w:'Kalas', i:'🎂', cat:'Läseboken', alt:['🧼', '👞', '🌂']},
+        {w:'Slåss', i:'🥊', cat:'Läseboken', alt:['🤝', '👋', '🙏']},
+        {w:'Knuffa', i:'🖐️', cat:'Läseboken', alt:['👟', '🍎', '🏠']},
+        {w:'Klättra', i:'🧗', cat:'Läseboken', alt:['🛋️', '🥣', '🛏️']},
+        {w:'Skräp', i:'🗑️', cat:'Läseboken', alt:['💎', '🎁', '🎂']},
+        {w:'Kasta', i:'⚾', cat:'Läseboken', alt:['📖', '🧹', '🛌']},
+
+        // SO/NO
+        {w:'Människa', i:'👤', cat:'SO/NO', alt:['🐱', '🌳', '🏠']},
+        {w:'Kall', i:'❄️', cat:'SO/NO', alt:['🔥', '☀️', '🌈']},
+        {w:'Stad', i:'🏙️', cat:'SO/NO', alt:['🚜', '⛺', '🛶']},
+        {w:'Gräva', i:'⛏️', cat:'SO/NO', alt:['🚀', '🎸', '🎨']},
+        {w:'Jaga', i:'🏹', cat:'SO/NO', alt:['💤', '📺', '🚿']},
+        {w:'Strand', i:'🏖️', cat:'SO/NO', alt:['🏔️', '🏢', '🛣️']},
+        {w:'Regnig', i:'🌧️', cat:'SO/NO', alt:['☀️', '🌈', '🌪️']},
+        {w:'Odla', i:'🌱', cat:'SO/NO', alt:['🍕', '📱', '🕹️']},
+        {w:'Moln', i:'☁️', cat:'SO/NO', alt:['⚡', '🔥', '🌊']},
+        {w:'Berg', i:'⛰️', cat:'SO/NO', alt:['🍎', '🍄', '🌳']},
+
+        // MATEMATIK
+        {w:'Halv', i:'🌓', cat:'Matematik', alt:['🌕', '🌑', '⭐']},
+        {w:'Likhetstecken', i:'=', cat:'Matematik', alt:['+', '-', 'x']},
+        {w:'Rektangel', i:'▭', cat:'Matematik', alt:['◯', '△', '⭐']},
+        {w:'Visare', i:'🕒', cat:'Matematik', alt:['🔋', '📡', '📱']},
+        {w:'Mäta', i:'📏', cat:'Matematik', alt:['🎨', '🎸', '🚲']},
+        {w:'Räkna ut', i:'🧮', cat:'Matematik', alt:['🎨', '⚽', '🎷']},
+        {w:'Flest', i:'🍒🍒🍒', cat:'Matematik', alt:['🍒', '🚫', '1️⃣']},
+        {w:'Hälften', i:'🍕', cat:'Matematik', alt:['🍔', '🍟', '🥤']},
+        {w:'Lika många', i:'👯', cat:'Matematik', alt:['👤', '🚫', '➖']},
+        {w:'Yngst', i:'👶', cat:'Matematik', alt:['👴', '🧔', '👦']}
+    ];
+
+    let gamePool = [];
+
+    function start() {
+        if(!document.getElementById('p-name').value) return alert("Skriv namn!");
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        gamePool = [...questions].sort(() => Math.random() - 0.5);
+        score = 0;
+        totalCount = 0;
+        document.getElementById('setup').style.display = 'none';
+        document.getElementById('active').style.display = 'block';
+        next();
+    }
+
+    function next() {
+        if(gamePool.length === 0) return end();
+        
+        totalCount++;
+        curQ = gamePool.pop();
+        
+        document.getElementById('count').innerText = totalCount;
+        document.getElementById('target-word').innerText = curQ.w;
+        document.getElementById('cat-info').innerText = "Område: " + curQ.cat;
+        
+        const opts = [...curQ.alt, curQ.i];
+        opts.sort(() => Math.random() - 0.5);
+        
+        const div = document.getElementById('options');
+        div.innerHTML = '';
+        opts.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => check(opt);
+            div.appendChild(btn);
+        });
+    }
+
+    function check(val) {
+        if(val === curQ.i) {
+            score++;
+            playSuccessSound();
+            document.getElementById('score').innerText = score;
+            next();
+        } else {
+            alert("Fel bild! Försök hitta det som betyder: " + curQ.w);
+        }
+    }
+
+    function speakWord() {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(curQ.w);
+        u.lang = 'sv-SE';
+        window.speechSynthesis.speak(u);
+    }
+
+    function playSuccessSound() {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); 
+        osc.frequency.exponentialRampToValueAtTime(1046.50, audioCtx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.2);
+    }
+
+    function end() {
+        document.getElementById('active').style.display = 'none';
+        document.getElementById('done').style.display = 'block';
+        document.getElementById('res').innerText = `Bra kämpat ${document.getElementById('p-name').value}! Du klarade ${score} av 40 ord från Skolordförråd Steg 1.`;
+    }
+</script>
+</body>
+</html>
